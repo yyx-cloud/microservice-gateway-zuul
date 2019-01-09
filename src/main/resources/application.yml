@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: microservice-gateway-zuul
+
+server:
+  port: 9101
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+  instance:
+    prefer-ip-address: true
+
+info:
+  title: im a zuul
+
+management:
+  security:
+    enabled: false
+
+#1、自定义微服务的访问路径：配置zuul.routes.指定微服务的serverIdId=指定路径
+zuul:
+  routes:
+    eureka-provider: /ep/**
+#2、忽略指定微服务：使用zuul.ignored-services配置需要忽略的服务，多个用逗号分隔
+#zuul:
+#  ignored-services: microservice-provider1,microservice-provider3
+#3、忽略所有微服务，只路由指定微服务
+#zuul:
+#  ignored-services: '*'
+#  routes:
+#    eureka-provider: /ep/**
+#4、同时指定多个微服务serverId和映射路径
+#zuul:
+#  routes:
+#    user-route:
+#      service-id: eureka-provider
+#      path: /ep/**
+#5、同时指定path和URL：此方式配置的路由不会作为HystrixCommand执行，同时也不能使用Ribbon负载均衡多个URL
+#zuul:
+#  routes:
+#    user-route:
+#      url: http://localhost:8000/
+#      path: /ep/**
+#6、指定path和URL，不破坏Hystrix、Ribbon特性
+#zuul:
+#  routes:
+#    user-route:
+#      service-id: eureka-provider
+#      path: /ep/**
+#ribbon:
+#  eureka:
+#    enable: false
+#eureka-provider:
+#  ribbon:
+#    listOdServers: localhost:8000,localhost:8001
+#8、路由前缀
+#  访问“/api/provider/1”将被转发到微服务provider的/api/1
+#zuul:
+#  routes:
+#    eureka-provider: /ep/**
+#  prefix: /api
+#  strip-prefix: false
+#  访问Zuul的/user/1路径，请求会被转发到provicer的/user/1
+#zuul:
+#  routes:
+#    eureka-provider:
+#      path: /user/**
+#      strip-prefix: false
+#9、忽略某些路径
+#  例如：想让Zuul代理某个微服务，同时保护改为服务的某些敏感路径，可使用ignored-Patterns指定忽略的正则
+#zuul:
+#  ignoredPatterns: /**/admin/**
+#  routes:
+#    eureka-provider: /ep/**
+
+
+#-----------------------------------
+#指定敏感Header
+#zuul:
+#  routes:
+#    eureka-provider:
+#      service-id: eureka-provider
+#      path: /ep/**
+#      senditive-headers: Cookie,Set-Cookie,Authorization
+#  sensitive-headers: Cookie,Set-Cookie,Authorization
+#忽略Header
+#zuul:
+#  ignored-headers: Header1,Header2
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+
+
+
+
+
+
+
+
+
+
+
